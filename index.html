@@ -194,14 +194,19 @@
 
   .receipt {
     margin-top: 25px;
-    padding: 18px;
-    background: rgba(215, 196, 160, 0.9);
-    border: 1px solid #C1AB85;
-    border-radius: 10px;
+    padding: 12px 14px;
+    background: #ffffff; /* white like paper */
+    border: 1px solid #e6e6e6;
+    border-radius: 4px;
     text-align: left;
     display: none;
     width: 90%;
-    box-shadow: 0 2px 8px rgba(134, 103, 69, 0.15);
+    box-shadow: none;
+    color: #000; /* black text like thermal receipts */
+    font-family: "Courier New", Courier, monospace; /* thermal-style monospace */
+    font-size: 12px;
+    line-height: 1.2;
+    letter-spacing: 0.2px;
   }
 
   .receipt h2 {
@@ -211,9 +216,13 @@
   }
 
   .receipt p {
-    margin: 5px 0;
-    color: #846745;
+    margin: 4px 0;
+    color: #000;
   }
+
+  /* Barcode sizing inside receipt */
+  #barcodeWrapper { text-align: center; margin-top: 8px; }
+  #barcode { max-width: 220px; width: 80%; height: auto; display: block; margin: 6px auto; }
 </style>
 </head>
 <body>
@@ -257,10 +266,17 @@
         <p><strong>Total Inserted:</strong> NT$<span id="receiptInserted"></span></p>
         <p><strong>Change:</strong> NT$<span id="receiptChange"></span></p>
         <p><strong>Date & Time:</strong> <span id="receiptDateTime"></span></p>
+        <!-- Barcode will be rendered here after purchase -->
+        <div id="barcodeWrapper" style="margin-top:12px; text-align:center;">
+          <svg id="barcode"></svg>
+        </div>
       </div>
     </div>
   </div>
 </div>
+
+<!-- JsBarcode CDN for client-side barcode generation -->
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
 
 <script>
   const items = [
@@ -365,6 +381,27 @@
       const now = new Date();
       const formattedDateTime = now.toLocaleString();
       receiptDateTime.textContent = formattedDateTime;
+
+      // --- Generate a simple unique barcode value and render it ---
+      try {
+        const barcodeValue = `VM-${Date.now()}-${Math.floor(Math.random() * 9000 + 1000)}`;
+        const barcodeEl = document.getElementById('barcode');
+        // Render barcode into the SVG element using JsBarcode
+        if (window.JsBarcode && barcodeEl) {
+          JsBarcode(barcodeEl, barcodeValue, {
+            format: 'CODE128',
+            lineColor: '#000',
+            width: 1.2,      // thinner bars
+            height: 40,      // shorter barcode
+            displayValue: true,
+            fontSize: 12,    // smaller label font
+            margin: 6
+          });
+        }
+      } catch (err) {
+        // Non-fatal: if barcode generation fails, log and continue
+        console.error('Barcode generation failed:', err);
+      }
 
       receipt.style.display = 'block';
 
