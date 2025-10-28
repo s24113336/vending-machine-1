@@ -10,14 +10,16 @@
     background: linear-gradient(135deg, #D7C4A0, #C1AB85);
     color: #846745;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    height: 100vh;
+    justify-content: flex-start;
+    min-height: 100vh;
     margin: 0;
+    padding: 28px 0;
   }
 
   .container {
-    background: rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.95);
     border: 1px solid rgba(193, 171, 133, 0.6);
     box-shadow: 0 10px 40px rgba(134, 103, 69, 0.3);
     border-radius: 20px;
@@ -27,6 +29,7 @@
     flex-direction: column;
     align-items: center;
     gap: 25px;
+    flex: 1 0 auto; /* allow container to grow so footer sits at bottom */
   }
 
   .title {
@@ -59,10 +62,13 @@
   }
 
   .item-list {
-    display: flex;
-    gap: 25px;
-    justify-content: center;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* two columns */
+    gap: 18px 24px;
+    justify-items: center;
+    align-items: start;
+    width: 100%;
+    max-width: 320px;
   }
 
   .item {
@@ -223,6 +229,17 @@
   /* Barcode sizing inside receipt */
   #barcodeWrapper { text-align: center; margin-top: 8px; }
   #barcode { max-width: 220px; width: 80%; height: auto; display: block; margin: 6px auto; }
+  
+  /* Page footer (bottom of layout) */
+  .site-footer {
+    width: 100%;
+    text-align: center;
+    margin-top: 12px;
+    color: #666;
+    font-size: 12px;
+    padding: 8px 0 18px 0;
+    font-family: Arial, Helvetica, sans-serif;
+  }
 </style>
 </head>
 <body>
@@ -233,7 +250,7 @@
   <div class="content">
     <!-- Left: Items -->
     <div class="left-panel">
-      <div class="item-list" id="items"></div>
+        <div class="item-list" id="items"></div>
     </div>
 
     <!-- Right: Coin drop + receipt -->
@@ -273,7 +290,10 @@
       </div>
     </div>
   </div>
-</div>
+  </div>
+
+  <!-- single footer centered below the layout -->
+  <footer class="site-footer">@2025 | Made by John Yamas | All right reserved.</footer>
 
 <!-- JsBarcode CDN for client-side barcode generation -->
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
@@ -417,6 +437,6 @@
   });
 
   renderItems();
-</script>
+  </script>
 </body>
 </html>
